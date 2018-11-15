@@ -16,6 +16,7 @@ def main():
     continue_playing = True
     game_deck = Deck()
     game_deck.shuffle_deck()
+    print_rules()
 
     player1 = Player("Player 1")
     dealer = Player("Dealer")
@@ -67,7 +68,7 @@ def main():
                     print("\tSTAY!")
                     break
         else:
-            print("\nPlayer1 busted.")
+            print("\nDealer not dealt because player 1 busted.")
 
         input("\nPress enter to continue...")
 
@@ -127,7 +128,7 @@ class Player:
                 if total+11 > 21:
                     total += 1
                 else:
-                    total += 1
+                    total += 11
             else:
                 total += 10
         return total
@@ -151,10 +152,10 @@ class Deck:
 def final_results(player, dealer):
     # show round results and print winner
     print(("\n" * 100) + "FINAL GAME RESULTS:")
-    print("{}\tWINS/LOSSES\n".format(player.name))
-    print("\t\t{}/{}".format(player.wins, player.losses))
-    print("{}\tWINS/LOSSES\n".format(dealer.name))
-    print("\t\t{}/{}".format(dealer.wins, dealer.losses))
+    print("{}\n\tWINS\tLOSSES".format(player.name))
+    print("\t{}\t\t{}".format(player.wins, player.losses))
+    print("{}\n\tWINS\tLOSSES".format(dealer.name))
+    print("\t{}\t\t{}".format(dealer.wins, dealer.losses))
 
 
 # show the winner of the game
@@ -186,6 +187,19 @@ def show_winner(player, dealer):
         print("DEALER WINS!")
         player.losses += 1
         dealer.wins += 1
+
+
+# print the rules of the game
+def print_rules():
+    print("*************************************")
+    print("*             BLACKJACK             *")
+    print("*************************************")
+    print("* Rules:                            *")
+    print("* 1. Ace is auto-set to 11 or 1     *")
+    print("* 2. Dealer always HIT if under 17  *")
+    print("* 3. Tie games are a push           *")
+    print("*************************************")
+    input("\n\tPress enter to continue...")
 
 
 # get user input and return boolean answer
