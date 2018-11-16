@@ -28,6 +28,7 @@ def main():
         # create player1, deal the player and run the player's hand
 
         print(("\n" * 100) + "PLAYER 1, IT IS YOUR TURN!")
+        player1.get_bet()
         player1.initial_deal(game_deck.cards)
         player1.show_hand()
         player1.print_total()
@@ -92,8 +93,9 @@ class Player:
         self.wins = 0
         self.losses = 0
         self.total = 0
+        self.chips = 1000
+        self.bet = 0
 
-    # initial deal of two cards, pops the cards selected from the deck. returns the hand and the remaining deck
     def initial_deal(self, game_deck):
         # reset total and hand at each initial deal
         self.total = 0
@@ -104,8 +106,22 @@ class Player:
             self.hand.append(game_deck[0])
             game_deck.pop(0)
             i += 1
-
         return game_deck
+
+    def get_bet(self):
+        self.bet = 0
+        while True:
+            try:
+                self.bet = int(input("You currently have {} chips to bet. How many would you like to bet?"
+                                     .format(self.chips)))
+            except:
+                print("Sorry, you must enter an integer")
+            else:
+                if self.bet <= self.chips:
+                    break
+                else:
+                    print("You only have {} to bet. Please enter valid bet.".format(self.chips))
+                    continue
 
     def show_hand(self):
         string_of_hand = ""
@@ -176,7 +192,7 @@ def final_results(players):
         print("\t{}\t\t{}".format(player.wins, player.losses))
 
 
-# show the winner of the game
+# show the winner of the game and adjust chips based on bet and win/loss counter
 def show_winner(players):
     player = players[0]
     dealer = players[1]
@@ -192,39 +208,52 @@ def show_winner(players):
         # player busted
         print("DEALER WINS!")
         player.losses += 1
+        player.chips -= player.bet
         dealer.wins += 1
     elif dealer.total_of_hand() > 21:
         # dealer busted
         print("PLAYER WINS!")
         player.wins += 1
+        player.chips += player.bet
         dealer.losses += 1
     elif dealer.total_of_hand() < player.total_of_hand():
         print("PLAYER WINS!")
         player.wins += 1
+        player.chips += player.bet
         dealer.losses += 1
     else:
         print("DEALER WINS!")
         player.losses += 1
+        player.chips -= player.bet
         dealer.wins += 1
 
 
+# decorator for printing the title above any output, along with a footer and a pause line
+def title_decorator(some_function):
+
+    def title_with_wrapper():
+        print("*************************************")
+        print("*             BLACKJACK             *")
+        print("*************************************")
+        some_function()
+        print("*************************************")
+        input("\n\tPress enter to continue...")
+    return title_with_wrapper
+
+
 # print the rules of the game
+@title_decorator
 def print_rules():
-    print("*************************************")
-    print("*             BLACKJACK             *")
-    print("*************************************")
     print("* Rules:                            *")
     print("* 1. Ace is auto-set to 11 or 1     *")
     print("* 2. Dealer always HIT if under 17  *")
     print("* 3. Tie games are a push           *")
-    print("*************************************")
-    input("\n\tPress enter to continue...")
 
 
 # get user input and return boolean answer
 def continue_playing_question():
     while True:
-        choice = str(input("Would you like keep playing? (y or n)"))
+        choice = str(input("Would you like to play another hand? (y or n)"))
         if "y" in choice.lower():
             return True
         elif "n" in choice.lower():
